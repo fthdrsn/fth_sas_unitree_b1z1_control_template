@@ -86,7 +86,6 @@ int main(int argc, char** argv)
 
         rclcpp::spin_some(node);
         i++;
-        RCLCPP_INFO_STREAM(node->get_logger(), qarm(0));
     }
     rdi.set_target_b1_planar_joint_velocities((VectorXd(3) << 0, 0, 0).finished());
 
