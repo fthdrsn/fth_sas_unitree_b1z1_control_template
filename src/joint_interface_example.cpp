@@ -47,7 +47,8 @@ int main(int argc, char** argv)
     auto node = std::make_shared<rclcpp::Node>("sas_unitree_b1z1_control_template_joint_interface_example");
 
     // 1 ms clock
-    sas::Clock clock{0.001};
+    double T{0.001};
+    sas::Clock clock{T};
     clock.init();
 
     // Initialize the RobotDriverClient
@@ -69,17 +70,23 @@ int main(int argc, char** argv)
 
     // For some iterations. Note that this can be stopped with CTRL+C.
     VectorXd qarm = rdi.get_arm_joint_states_including_gripper();
+    double w = 2.0;
 
-    for(auto i=0;i<5000;++i)
+    unsigned int i = 0;
+    while (!kill_this_process)
     {
         clock.update_and_sleep();
+        double t = i*T;
         VectorXd u_base = (VectorXd(3) << 0.01, 0.01, 0.1).finished();
         rdi.set_target_b1_planar_joint_velocities(u_base);
 
-        qarm(0) = -pi/2;
+        qarm(0) = (pi/2)*sin(w*t);
+        qarm(1) = pi/2 - (pi/4)*sin(w*t);
         rdi.set_arm_joint_positions(qarm);
 
         rclcpp::spin_some(node);
+        i++;
+        RCLCPP_INFO_STREAM(node->get_logger(), qarm(0));
     }
     rdi.set_target_b1_planar_joint_velocities((VectorXd(3) << 0, 0, 0).finished());
 
