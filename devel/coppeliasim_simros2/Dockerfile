@@ -51,27 +51,10 @@ RUN cd ~/git/rap2025_wholebodycontrol && git pull
 
 RUN mkdir -p /root/.CoppeliaSim && cp ~/git/rap2025_wholebodycontrol/docker/sas_coppeliasim_unitree_b1z1/usrset.txt /root/.CoppeliaSim/
 
-# copy the folder ~/git/rap2025_wholebodycontrol/ to ~/ros2_ws/src/rap2025_wholebodycontrol/
-#RUN cp -r ~/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/ \
-# ~/ros2_ws/src/ \
-#&& /bin/bash -c "source /opt/ros/jazzy/setup.bash; cd ~/ros2_ws/; colcon build && source install/setup.bash" 
 
 WORKDIR /app
 
 RUN mkdir -p /app/software/ROS2/ros2_ws/src
-
-# Copy files from this repository to the image
-#CMakeLists.txt       devel    launch   package.xml  scenes  utils
-#CMakeLists.txt.user  include  LICENSE  README.md    src
-
-
-COPY ./CMakeLists.txt /app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/CMakeLists.txt
-COPY ./package.xml /app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/package.xml
-COPY ./launch /app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/launch
-COPY ./utils /app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/utils
-COPY ./include /app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/include
-COPY ./src /app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/src
-COPY ./scenes app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/scenes
 
 RUN bash -c "source /opt/ros/jazzy/setup.bash; cd /app/software/ROS2/ros2_ws/; colcon build && source install/setup.bash" 
 

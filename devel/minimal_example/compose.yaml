@@ -7,6 +7,7 @@ services:
       dockerfile: devel/coppeliasim_simros2/Dockerfile
     environment:
       DISPLAY: $DISPLAY # x server related
+      ROS_DOMAIN_ID: 1 # Set ROS domain ID for all ROS2 nodes
     privileged: true # Needed for some gpu configurations.
     volumes:
       #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
@@ -17,5 +18,23 @@ services:
     command: /bin/bash -c "
       sleep 3; 
       source /opt/ros/jazzy/setup.bash;
-      export ROS_DOMAIN_ID=1;
       ~/utils/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu24_04/coppeliaSim.sh -s 0 -f app/software/ROS2/ros2_ws/src/sas_unitree_b1z1_control_template/scenes/ros2_holonomic_b1z1_setup.ttt"
+
+  joint_interface_example:
+    build:
+      context: ../..  
+      dockerfile: devel/joint_interface_example_cpp/Dockerfile
+    environment:
+      DISPLAY: $DISPLAY # x server related
+      ROS_DOMAIN_ID: 1 # Set ROS domain ID for all ROS2 nodes
+    privileged: true # Needed for some gpu configurations.
+    volumes:
+      #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
+      - /tmp/.X11-unix:/tmp/.X11-unix # x server related
+      - ~/.Xauthority:/root/.Xauthority # x server related
+    network_mode: "host" # x server related
+    ipc: "host"
+    command: /bin/bash -c "
+      source /opt/ros/jazzy/setup.bash;
+      cd /app/software/ROS2/ros2_ws/ && source install/setup.bash && colcon build;
+      ros2 run sas_unitree_b1z1_control_template joint_interface_example_cpp  "
