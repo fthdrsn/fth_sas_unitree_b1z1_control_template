@@ -86,6 +86,8 @@ int main(int argc, char** argv)
 
         rclcpp::spin_some(node);
         i++;
+        RCLCPP_INFO_STREAM(node->get_logger(), "B1 position: " << rdi.get_b1_pose().translation().vec3().transpose());
+        RCLCPP_INFO_STREAM(node->get_logger(), "Z1 config  : " << rdi.get_arm_joint_states());
     }
     rdi.set_target_b1_planar_joint_velocities((VectorXd(3) << 0, 0, 0).finished());
 
