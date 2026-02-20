@@ -7,7 +7,7 @@ services:
       dockerfile: devel/coppeliasim_simros2/Dockerfile
     environment:
       DISPLAY: $DISPLAY # x server related
-      ROS_DOMAIN_ID: 1 # Set ROS domain ID for all ROS2 nodes
+      ROS_DOMAIN_ID: 77 # Set ROS domain ID for all ROS2 nodes
     privileged: true # Needed for some gpu configurations.
     volumes:
       #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
@@ -20,13 +20,13 @@ services:
       source /opt/ros/jazzy/setup.bash;
       ~/utils/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu24_04/coppeliaSim.sh -s 0 -f app/scenes/ros2_holonomic_b1z1_setup.ttt"
 
-  control_example:
+  sas_unitree_b1z1_control_template:
     build:
       context: ../..  
-      dockerfile: devel/control_example/Dockerfile
+      dockerfile: devel/sas_unitree_b1z1_control_template/Dockerfile
     environment:
       DISPLAY: $DISPLAY # x server related
-      ROS_DOMAIN_ID: 1 # Set ROS domain ID for all ROS2 nodes
+      ROS_DOMAIN_ID: 77 # Set ROS domain ID for all ROS2 nodes
     privileged: true # Needed for some gpu configurations.
     volumes:
       #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
