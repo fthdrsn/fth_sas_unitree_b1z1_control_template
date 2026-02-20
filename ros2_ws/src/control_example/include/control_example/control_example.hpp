@@ -53,17 +53,6 @@ class ControlExample
 {
 
 private:
-
-    sas::Clock clock_;
-    //---------- To get data about the robot state and command the robot----------------//
-    std::shared_ptr<UnitreeB1Z1RobotClient> robot_client_;
-    Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_coppeliasim_frame_x_;
-    //-----------------------------------------------------------------------------
-
-
-protected:
-
-
     ControlExampleConfiguration configuration_;
     std::atomic_bool* st_break_loops_;
     std::shared_ptr<rclcpp::Node> node_;

@@ -1,0 +1,3 @@
+[submodule "submodules/unitree_kinematics"]
+	path = submodules/unitree_kinematics
+	url = https://github.com/Adorno-Lab/unitree_kinematics.git

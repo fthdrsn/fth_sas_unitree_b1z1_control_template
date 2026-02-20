@@ -20,13 +20,16 @@ find_package(sensor_msgs REQUIRED)
 
 
 set(REPOSITORY_DIR ${CMAKE_SOURCE_DIR}/../../../)
-#include_directories(${REPOSITORY_DIR}/software/submodules/unitree_kinematics/include/)
+include_directories(${REPOSITORY_DIR}/submodules/unitree_kinematics/include/)
 include_directories(${REPOSITORY_DIR}/utils)
 ############################
 # CPP Binary Block [BEGIN] #
 # vvvvvvvvvvvvvvvvvvvvvvvv #
 add_library(${PROJECT_NAME} SHARED
     src/control_example.cpp
+    ${REPOSITORY_DIR}/submodules/unitree_kinematics/src/robots/UnitreeB1Z1MobileRobot.cpp
+    ${REPOSITORY_DIR}/submodules/unitree_kinematics/src/robots/UnitreeZ1Robot.cpp
+    ${REPOSITORY_DIR}/submodules/unitree_kinematics/src/interfaces/coppeliasim/robots/UnitreeB1Z1CoppeliaSimZMQRobot.cpp
     ${REPOSITORY_DIR}/utils/sas_unitree_b1z1_robot_client/UnitreeB1Z1RobotClient.cpp
     )
 
