@@ -33,6 +33,7 @@
 #include "dqrobotics/interfaces/coppeliasim/robots/UnitreeB1Z1CoppeliaSimZMQRobot.h"
 #include "dqrobotics/robots/UnitreeB1Z1MobileRobot.h"
 #include <sas_conversions/DQ_geometry_msgs_conversions.hpp>
+#include <dqrobotics_extensions/robot_constraint_manager/robot_constraint_manager.hpp>
 
 
 
@@ -146,6 +147,14 @@ public:
 
 };
 
+bool ControlExample::_should_shutdown() const
+{
+    return (*st_break_loops_);
+}
+
+/**
+ * @brief ControlExample::_update_kinematic_model
+ */
 void ControlExample::_update_kinematic_model()
 {
     DQ X_IMU;
@@ -153,7 +162,6 @@ void ControlExample::_update_kinematic_model()
     DQ X_J1_OFFSET;
     VectorXd q;
     // wait for the topics
-
 
     while (!impl_->robot_client_->is_arm_data_available() ||  !is_unit(impl_->robot_client_->get_b1_pose()))
     {
@@ -268,17 +276,57 @@ void ControlExample::control_loop()
 
     //###########################################################################################################//
     //####################### Main Kinematic control loop running here ##########################################//
+    double w = 0.5;
+
+    VectorXd qi_arm = impl_->robot_client_->get_arm_joint_states();
+    unsigned int i = 0;
+    const double& T = configuration_.thread_sampling_time_sec;
     while(!_should_shutdown())
     {
         rclcpp::spin_some(node_);
         impl_->clock_.update_and_sleep();
         rclcpp::spin_some(node_);
         RCLCPP_INFO_ONCE(node_->get_logger(), "Control loop!");
+        VectorXd q = DQ_robotics_extensions::Numpy::vstack(DQ_robotics_extensions::get_planar_joint_configuration_from_pose(impl_->robot_client_->get_b1_pose()),
+                                   qi_arm);
+        DQ x = impl_->robot_model_->fkm(q);
+        DQ xd = x;
+        impl_->publish_coppeliasim_frame_x(x);
+        if (impl_->new_coppeliasim_xd_data_available())
+        {
+            // There is new data, then we update the desired pose;
+            xd = impl_->get_desired_pose();
+        }else{
+            // There is no new data about xd, then the desired pose is the same
+            // as the current pose. Consequently, the error is zero and robot stops.
+            xd = x;
+        }
+        impl_->publish_coppeliasim_frame_x(x);
+
+        double t = i*T;
+        double phi_dot = 0.04*sin(w*t);
+
+        if (t>20.0)
+            phi_dot = 0.0;
+
+        /// This planar joint velocity commands [x_dot, y_dot, phi_dot] are expected to be with respect to the body frame.
+        VectorXd u_base_wrt_body_frame = (VectorXd(3) << 0.0, 0.0, phi_dot).finished();
+        impl_->robot_client_->set_target_b1_planar_joint_velocities(u_base_wrt_body_frame);
+
+
+        ///For instance, if your controller generates the velocities with respect to the inertial frame (u_qdot), you need to use this
+        ///  DQ b1_pose = impl_->robot_client_->get_b1_pose();
+        ///  VectorXd u_base_wrt_body_frame = DQ_robotics_extensions::get_planar_joint_configuration_velocities_at_body_frame(b1_pose, u_qdot.head(3));
 
 
 
+        qi_arm(0) = (pi/4)*sin(w*t);
+
+        impl_->robot_client_->set_arm_joint_positions(DQ_robotics_extensions::Numpy::vstack(qi_arm, DQ_robotics_extensions::CVectorXd({0.0})));
+        i++;
 
     }
+
 
 }
 

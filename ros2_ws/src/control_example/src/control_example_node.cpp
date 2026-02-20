@@ -32,35 +32,37 @@ int main(int argc, char** argv)
 
     try
     {
-        /*
-        sas::ConsensusControlUnitreeB1Z1Configuration configuration;
 
-
+        sas::ControlExampleConfiguration configuration;
         sas::get_ros_parameter(node,"cs_host",configuration.cs_host);
         sas::get_ros_parameter(node,"cs_port",configuration.cs_port);
         sas::get_ros_parameter(node,"cs_TIMEOUT_IN_MILISECONDS",configuration.cs_TIMEOUT_IN_MILISECONDS);
         sas::get_ros_parameter(node,"cs_B1_robotname",configuration.cs_B1_robotname);
         sas::get_ros_parameter(node,"cs_Z1_robotname",configuration.cs_Z1_robotname);
-        sas::get_ros_parameter(node,"vfi_file", configuration.vfi_file);
         sas::get_ros_parameter(node,"B1_topic_prefix",configuration.B1_topic_prefix);
         sas::get_ros_parameter(node,"Z1_topic_prefix",configuration.Z1_topic_prefix);
-        sas::get_ros_parameter(node,"external_B1_agent_topic_prefix",configuration.external_B1_agent_topic_prefix);
-        sas::get_ros_parameter(node,"external_Z1_agent_topic_prefix",configuration.external_Z1_agent_topic_prefix);
-        sas::get_ros_parameter(node,"external_agent_3_topic_prefix",configuration.external_agent_3_topic_prefix);
-        sas::get_ros_parameter(node,"task_commander_topic_prefix", configuration.task_commander_topic_prefix);
-        sas::get_ros_parameter(node,"agent_index",configuration.agent_index);
-        sas::get_ros_parameter(node,"number_of_agents", configuration.number_of_agents);
+        sas::get_ros_parameter(node, "cs_desired_frame", configuration.cs_desired_frame);
         sas::get_ros_parameter(node,"thread_sampling_time_sec",configuration.thread_sampling_time_sec);
 
+        std::vector<double> configuration_limits_min;
+        std::vector<double> configuration_limits_max;
+        sas::get_ros_parameter(node,"configuration_limits_min_deg", configuration_limits_min);
+        sas::get_ros_parameter(node,"configuration_limits_max_deg", configuration_limits_max);
+        configuration.configuration_limits = {deg2rad(sas::std_vector_double_to_vectorxd(configuration_limits_min)),
+                                              deg2rad(sas::std_vector_double_to_vectorxd(configuration_limits_max))};
 
-        auto robot_driver = std::make_shared<sas::ConsensusControlUnitreeB1Z1>(node,
-                                                                        configuration,
-                                                                        &kill_this_process); //,"sas_b1/b1_1", "sas_z1/z1_1");
 
+        std::vector<double> config_vel_limits_min;
+        std::vector<double> config_vel_limits_max;
+        sas::get_ros_parameter(node,"config_vel_limits_min", config_vel_limits_min);
+        sas::get_ros_parameter(node,"config_vel_limits_max", config_vel_limits_max);
+        configuration.configuration_vel_limits = {sas::std_vector_double_to_vectorxd(config_vel_limits_min),
+                                                  sas::std_vector_double_to_vectorxd(config_vel_limits_max)};
+
+        auto driver = std::make_shared<sas::ControlExample>(node,configuration, &kill_this_process);
         RCLCPP_INFO_STREAM_ONCE(node->get_logger(), "::Loading parameters from parameter server.");
+        driver->control_loop();
 
-        robot_driver->control_loop();
-        */
     }
     catch (const std::exception& e)
     {
@@ -68,8 +70,6 @@ int main(int argc, char** argv)
         std::cerr << std::string("::Exception::") << e.what();
     }
 
-
-    //sas::display_signal_handler_none_bug_info(node);
     return 0;
 
 

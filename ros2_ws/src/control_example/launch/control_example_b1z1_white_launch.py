@@ -18,8 +18,8 @@ def generate_launch_description():
                     default_value='30'
                 ),
         Node(
-            package='sas_control_unitree_b1z1',
-            executable='sas_control_unitree_b1z1_node',
+            package='control_example',
+            executable='control_example_node',
             name='b1z1_1',
             namespace="",
             parameters=[{
@@ -29,17 +29,13 @@ def generate_launch_description():
                 "cs_B1_robotname": "UnitreeB1_1",
                 "cs_Z1_robotname": "UnitreeZ1",
                 "cs_desired_frame": "xd1",
-                "vfi_file":"/root/ros2_ws/src/sas_control_unitree_b1z1/cfg/rcm_vfi_constraints.yaml", # for Docker files
-                #"vfi_file":"/home/clerice/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_control_unitree_b1z1/cfg/rcm_vfi_constraints.yaml", # for local development
                 "B1_topic_prefix": "sas_b1/b1_1",
                 "Z1_topic_prefix": "sas_z1/z1_1",
                 "thread_sampling_time_sec": 0.002,
-                "controller_proportional_gain": 8.0,
-                "controller_damping": 0.05,
-                "controller_target_region_size": 0.1,
-                "controller_target_exit_size": 0.26,
-                "controller_enable_parking_break_when_gripper_is_open": True,
-                "debug_wait_for_topics": True
+                "configuration_limits_min_deg": [-10000.0, -10000.0, -10000.0, -30.0,  45.0,  -90.0, -80.0, -45.0, -160.0],  
+                "configuration_limits_max_deg": [ 10000.0,  10000.0,  10000.0,  30.0, 165.0,    0.0,  80.0,  45.0,  160.0],  
+                "config_vel_limits_min": [-0.15, -0.15, -0.15, -1.57, -1.57, -1.57, -1.57, -1.57, -1.57],
+                "config_vel_limits_max": [ 0.2,  0.15,  0.15,  1.57,  1.57,  1.57,  1.57,  1.57,  1.57],
             }]
         ),
 

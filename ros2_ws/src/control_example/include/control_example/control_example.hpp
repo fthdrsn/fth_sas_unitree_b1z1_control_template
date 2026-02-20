@@ -44,9 +44,10 @@ struct ControlExampleConfiguration
     std::string cs_Z1_robotname;
     std::string B1_topic_prefix;
     std::string Z1_topic_prefix;
+    std::string cs_desired_frame;
     double thread_sampling_time_sec;
-    double controller_target_region_size_;
-    double controller_target_exit_size_;
+    std::tuple<VectorXd, VectorXd> configuration_limits;
+    std::tuple<VectorXd, VectorXd> configuration_vel_limits;
 };
 
 class ControlExample

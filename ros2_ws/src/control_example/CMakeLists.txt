@@ -34,7 +34,11 @@ add_library(${PROJECT_NAME} SHARED
     )
 
 target_link_libraries(${PROJECT_NAME}
-  dqrobotics
+    dqrobotics
+    dqrobotics-interface-coppeliasim-zmq
+    robot_constraint_editor
+    robot_constraint_manager
+    Eigen3::Eigen
   )
 ament_target_dependencies(${PROJECT_NAME}
 rclcpp geometry_msgs std_msgs sensor_msgs sas_common sas_core sas_conversions sas_datalogger Eigen3 sas_robot_driver
@@ -87,7 +91,7 @@ install(
 
 # we use set--unset
 
-set(RCLCPP_LOCAL_BINARY_NAME sas_control_unitree_b1z1_node)
+set(RCLCPP_LOCAL_BINARY_NAME control_example_node)
 add_executable(${RCLCPP_LOCAL_BINARY_NAME}
     src/control_example_node.cpp
     )
@@ -126,5 +130,11 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 ament_package()

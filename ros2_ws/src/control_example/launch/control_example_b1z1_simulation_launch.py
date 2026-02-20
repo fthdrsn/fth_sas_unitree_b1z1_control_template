@@ -34,6 +34,10 @@ def generate_launch_description():
                 "B1_topic_prefix": "sas_b1/b1_1",
                 "Z1_topic_prefix": "sas_z1/z1_1",
                 "thread_sampling_time_sec": 0.002,
+                "configuration_limits_min_deg": [-10000.0, -10000.0, -10000.0, -30.0,  45.0,  -90.0, -80.0, -45.0, -160.0],  
+                "configuration_limits_max_deg": [ 10000.0,  10000.0,  10000.0,  30.0, 165.0,    0.0,  80.0,  45.0,  160.0],  
+                "config_vel_limits_min": [-0.15, -0.15, -0.15, -1.57, -1.57, -1.57, -1.57, -1.57, -1.57],
+                "config_vel_limits_max": [ 0.2,  0.15,  0.15,  1.57,  1.57,  1.57,  1.57,  1.57,  1.57],
             }]
         ),
 
