@@ -3,6 +3,7 @@
 #include <sas_core/eigen3_std_conversions.hpp>
 #include <dqrobotics/utils/DQ_Math.h>
 //#include "sas_consensus_control_unitree_b1z1/sas_consensus_control_unitree_b1z1.hpp"
+#include "control_example/control_example.hpp"
 
 /*********************************************
  * SIGNAL HANDLER
