@@ -18,11 +18,16 @@ find_package(geometry_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 
+
+set(REPOSITORY_DIR ${CMAKE_SOURCE_DIR}/../../../)
+#include_directories(${REPOSITORY_DIR}/software/submodules/unitree_kinematics/include/)
+include_directories(${REPOSITORY_DIR}/utils)
 ############################
 # CPP Binary Block [BEGIN] #
 # vvvvvvvvvvvvvvvvvvvvvvvv #
 add_library(${PROJECT_NAME} SHARED
     src/control_example.cpp
+    ${REPOSITORY_DIR}/utils/sas_unitree_b1z1_robot_client/UnitreeB1Z1RobotClient.cpp
     )
 
 target_link_libraries(${PROJECT_NAME}
