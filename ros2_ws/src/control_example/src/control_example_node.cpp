@@ -1,37 +1,18 @@
-/*
-#    Copyright (c) 2025-2026 Adorno-Lab
-#
-#    This is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Lesser General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    This is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Lesser General Public License for more details.
-#
-#    You should have received a copy of the GNU Lesser General Public License.
-#    If not, see <https://www.gnu.org/licenses/>.
-#
-# ################################################################
-#
-#   Author: Juan Jose Quiroz Omana (email: juanjose.quirozomana@manchester.ac.uk)
-#   This example is based on https://github.com/MarinhoLab/sas_robot_driver_ur
-#
-# ################################################################
-*/
-
 #include <rclcpp/rclcpp.hpp>
-#include <sas_core/sas_clock.hpp>
-#include <sas_robot_driver/sas_robot_driver_client.hpp>
+#include <sas_common/sas_common.hpp>
+#include <sas_core/eigen3_std_conversions.hpp>
 #include <dqrobotics/utils/DQ_Math.h>
-#include "sas_unitree_b1z1_robot_client/UnitreeB1Z1RobotClient.hpp"
+//#include "sas_consensus_control_unitree_b1z1/sas_consensus_control_unitree_b1z1.hpp"
 
-using namespace DQ_robotics;
-
+/*********************************************
+ * SIGNAL HANDLER
+ * *******************************************/
 #include<signal.h>
+
 static std::atomic_bool kill_this_process(false);
+
+void sig_int_handler(int);
+
 void sig_int_handler(int)
 {
     kill_this_process = true;
@@ -39,67 +20,56 @@ void sig_int_handler(int)
 
 int main(int argc, char** argv)
 {
+
     if(signal(SIGINT, sig_int_handler) == SIG_ERR)
+    {
         throw std::runtime_error("::Error setting the signal int handler.");
-
-
-    rclcpp::init(argc,argv,rclcpp::InitOptions(),rclcpp::SignalHandlerOptions::None);
-    auto node = std::make_shared<rclcpp::Node>("sas_unitree_b1z1_control_template_joint_interface_example");
-
-    // 1 ms clock
-    double T{0.001};
-    sas::Clock clock{T};
-    clock.init();
-
-    // Initialize the RobotDriverClient
-    sas::UnitreeB1Z1RobotClient rdi(node, "sas_b1/b1_1", "sas_z1/z1_1", sas::UnitreeB1Z1RobotClient::MODE::CONTROL);
-
-    // Wait for RobotDriverClient to be enabled
-    while(!rdi.is_enabled() && !kill_this_process)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        rclcpp::spin_some(node);
     }
 
-    // Get topic information
-    RCLCPP_INFO_STREAM(node->get_logger(),"b1_topic_prefix = " << rdi.get_b1_topic_prefix());
-    RCLCPP_INFO_STREAM(node->get_logger(),"z1_topic_prefix = " << rdi.get_z1_topic_prefix());
+    rclcpp::init(argc,argv);
+    auto node = std::make_shared<rclcpp::Node>("sas_consensus_control_node");
 
-    // Read the values sent by the RobotDriverServer
-
-
-    // For some iterations. Note that this can be stopped with CTRL+C.
-    VectorXd qarm = rdi.get_arm_joint_states_including_gripper();
-    double w = 2.0;
-
-    unsigned int i = 0;
-    while (!kill_this_process)
+    try
     {
-        clock.update_and_sleep();
-        double t = i*T;
-        VectorXd u_base = (VectorXd(3) << 0.01, 0.01, 0.1).finished();
-        rdi.set_target_b1_planar_joint_velocities(u_base);
+        /*
+        sas::ConsensusControlUnitreeB1Z1Configuration configuration;
 
-        qarm(0) = (pi/2)*sin(w*t);
-        qarm(1) = pi/2 - (pi/4)*sin(w*t);
-        rdi.set_arm_joint_positions(qarm);
 
-        rclcpp::spin_some(node);
-        i++;
-        RCLCPP_INFO_STREAM(node->get_logger(), "B1 position: " << rdi.get_b1_pose().translation().vec3().transpose());
-        RCLCPP_INFO_STREAM(node->get_logger(), "Z1 config  : " << rdi.get_arm_joint_states());
+        sas::get_ros_parameter(node,"cs_host",configuration.cs_host);
+        sas::get_ros_parameter(node,"cs_port",configuration.cs_port);
+        sas::get_ros_parameter(node,"cs_TIMEOUT_IN_MILISECONDS",configuration.cs_TIMEOUT_IN_MILISECONDS);
+        sas::get_ros_parameter(node,"cs_B1_robotname",configuration.cs_B1_robotname);
+        sas::get_ros_parameter(node,"cs_Z1_robotname",configuration.cs_Z1_robotname);
+        sas::get_ros_parameter(node,"vfi_file", configuration.vfi_file);
+        sas::get_ros_parameter(node,"B1_topic_prefix",configuration.B1_topic_prefix);
+        sas::get_ros_parameter(node,"Z1_topic_prefix",configuration.Z1_topic_prefix);
+        sas::get_ros_parameter(node,"external_B1_agent_topic_prefix",configuration.external_B1_agent_topic_prefix);
+        sas::get_ros_parameter(node,"external_Z1_agent_topic_prefix",configuration.external_Z1_agent_topic_prefix);
+        sas::get_ros_parameter(node,"external_agent_3_topic_prefix",configuration.external_agent_3_topic_prefix);
+        sas::get_ros_parameter(node,"task_commander_topic_prefix", configuration.task_commander_topic_prefix);
+        sas::get_ros_parameter(node,"agent_index",configuration.agent_index);
+        sas::get_ros_parameter(node,"number_of_agents", configuration.number_of_agents);
+        sas::get_ros_parameter(node,"thread_sampling_time_sec",configuration.thread_sampling_time_sec);
+
+
+        auto robot_driver = std::make_shared<sas::ConsensusControlUnitreeB1Z1>(node,
+                                                                        configuration,
+                                                                        &kill_this_process); //,"sas_b1/b1_1", "sas_z1/z1_1");
+
+        RCLCPP_INFO_STREAM_ONCE(node->get_logger(), "::Loading parameters from parameter server.");
+
+        robot_driver->control_loop();
+        */
     }
-    rdi.set_target_b1_planar_joint_velocities((VectorXd(3) << 0, 0, 0).finished());
+    catch (const std::exception& e)
+    {
+        RCLCPP_ERROR_STREAM_ONCE(node->get_logger(), std::string("::Exception::") + e.what());
+        std::cerr << std::string("::Exception::") << e.what();
+    }
 
 
-    // Statistics
-    RCLCPP_INFO_STREAM(node->get_logger(),"Statistics for the entire loop");
+    //sas::display_signal_handler_none_bug_info(node);
+    return 0;
 
-    RCLCPP_INFO_STREAM(node->get_logger(),"  Mean computation time: " << clock.get_statistics(
-                                               sas::Statistics::Mean, sas::Clock::TimeType::Computational));
-    RCLCPP_INFO_STREAM(node->get_logger(),"  Mean idle time: " << clock.get_statistics(
-                                               sas::Statistics::Mean, sas::Clock::TimeType::Idle));
-    RCLCPP_INFO_STREAM(node->get_logger(),"  Mean effective thread sampling time: " << clock.get_statistics(
-                                               sas::Statistics::Mean, sas::Clock::TimeType::EffectiveSampling));
 
 }
