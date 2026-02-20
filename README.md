@@ -6,7 +6,7 @@
 
 Tested  on Ubuntu Amd64
 ```shell
-cd ~/git/sas_unitree_b1z1_control_template/devel/minimal_example
+cd ~/git/sas_unitree_b1z1_control_template/devel/control_example_simulation_compose/
 xhost +local:root
 docker compose up
 ```
