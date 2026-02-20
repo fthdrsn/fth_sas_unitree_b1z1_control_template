@@ -14,9 +14,13 @@ find_package(sas_core REQUIRED)
 find_package(sas_conversions REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
+
+set(REPOSITORY_DIR ${CMAKE_SOURCE_DIR}/../../../)
+include_directories(${REPOSITORY_DIR}/utils)
+
 include_directories(utils)
 add_library(${PROJECT_NAME}
-    utils/sas_unitree_b1z1_robot_client/UnitreeB1Z1RobotClient.cpp
+    ${REPOSITORY_DIR}/utils/sas_unitree_b1z1_robot_client/UnitreeB1Z1RobotClient.cpp
 )
 ament_target_dependencies(${PROJECT_NAME}
 rclcpp sas_core sas_conversions sensor_msgs
