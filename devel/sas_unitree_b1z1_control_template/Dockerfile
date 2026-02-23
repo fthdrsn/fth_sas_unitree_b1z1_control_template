@@ -30,10 +30,10 @@ WORKDIR /app
 
 RUN mkdir -p /app/software/ROS2/ros2_ws/src
 
-
-COPY ./ros2_ws/src/control_example /app/software/ROS2/ros2_ws/src/control_example
-COPY ./ros2_ws/src/sas_monitor_coppeliasim /app/software/ROS2/ros2_ws/src/sas_monitor_coppeliasim 
-COPY ./ros2_ws/src/taskviz /app/software/ROS2/ros2_ws/src/taskviz
+COPY ./ros2_ws/src/ /app/software/ROS2/ros2_ws/src/
+#COPY ./ros2_ws/src/control_example /app/software/ROS2/ros2_ws/src/control_example
+#COPY ./ros2_ws/src/sas_monitor_coppeliasim /app/software/ROS2/ros2_ws/src/sas_monitor_coppeliasim 
+#COPY ./ros2_ws/src/unitree_monitor /app/software/ROS2/ros2_ws/src/unitree_monitor
 COPY ./utils /app/software/ROS2/utils
 COPY ./submodules/unitree_kinematics /app/software/ROS2/submodules/unitree_kinematics/
 
