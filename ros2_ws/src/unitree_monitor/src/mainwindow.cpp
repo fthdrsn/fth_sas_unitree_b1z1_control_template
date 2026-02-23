@@ -8,6 +8,8 @@ MainWindow::MainWindow(std::shared_ptr<rclcpp::Node> &node, const  sas::DataConf
     ui{new Ui::MainWindow},
     time_step_in_milliseconds_{100},
     elapsed_time_{0},
+    enable_watchdog_{false},
+    watchdog_notification_updated_{false},
     configuration_{configuration},
     node_{node},
     pause_switch_status_{true},
@@ -100,11 +102,11 @@ MainWindow::MainWindow(std::shared_ptr<rclcpp::Node> &node, const  sas::DataConf
     robot_client_white = std::make_shared<sas::UnitreeB1Z1RobotClient>(node_,
                                                               configuration_.B1_1_topic_prefix,
                                                               configuration_.Z1_1_topic_prefix,
-                                                              sas::UnitreeB1Z1RobotClient::MODE::MONITORING);
+                                                              sas::UnitreeB1Z1RobotClient::MODE::WATCHDOG);
     robot_client_black = std::make_shared<sas::UnitreeB1Z1RobotClient>(node_,
                                                               configuration_.B1_2_topic_prefix,
                                                               configuration_.Z1_2_topic_prefix,
-                                                              sas::UnitreeB1Z1RobotClient::MODE::MONITORING);
+                                                              sas::UnitreeB1Z1RobotClient::MODE::WATCHDOG);
 
     subscriber_control_inputs_white_ = node->create_subscription<std_msgs::msg::Float64MultiArray>(
         configuration_.B1_1_topic_prefix + "/control_inputs", 1,
@@ -156,12 +158,11 @@ MainWindow::MainWindow(std::shared_ptr<rclcpp::Node> &node, const  sas::DataConf
     RCLCPP_DEBUG(node_->get_logger(), "Black robot client created");
 
     //--------------------pause button configuration------------------------------//
-    connect(ui->PauseButton, &QPushButton::clicked, this,
-            &MainWindow::_pause_button_clicked);
+  //  connect(ui->PauseButton, &QPushButton::clicked, this,
+  //          &MainWindow::_pause_button_clicked);
 
-    ui->PauseButton->setStyleSheet("background-color: #298552;"
-                                           "color: white;" );
-    ui->PauseButton->setText("⏸ Resume");
+   ui->pushButton_watchdog_->setStyleSheet(disabled_black_color_);
+   ui->pushButton_watchdog_->setText("watchdog (no started)");
 
 
 
@@ -241,6 +242,27 @@ void MainWindow::timerEvent([[maybe_unused]] QTimerEvent *event)
                                                "color: white;" );
         ui->statusbar->showMessage("Received signal from switch. Executing an Emergency Stop...");
     }
+
+    if (total_seconds  > 5.0)
+        enable_watchdog_ = true;
+
+    if (enable_watchdog_)
+    {
+        if (robot_client_white->is_enabled())
+            robot_client_white->send_watchdog_trigger(watchdog_period_, 1e30);
+
+        if (robot_client_black->is_enabled())
+            robot_client_black->send_watchdog_trigger(watchdog_period_, 1e30);
+
+
+        if (!watchdog_notification_updated_)
+        {
+            ui->pushButton_watchdog_->setStyleSheet(active_green_color_);
+            ui->pushButton_watchdog_->setText("watchdog (running!)");
+            watchdog_notification_updated_ = true;
+        }
+
+    }
 }
 
 
@@ -262,47 +284,6 @@ void MainWindow::_callback_control_inputs_black(const std_msgs::msg::Float64Mult
     control_inputs_black_ = sas::std_vector_double_to_vectorxd(msg.data);
 }
 
-/*
-void MainWindow::_callback_external_B1Z1_agent_1_output(const consensus_protocol_msgs::msg::FormationControlAgentData &msg)
-{
-    yce1_ = DQ(msg.agent_output[0],
-               msg.agent_output[1],
-               msg.agent_output[2],
-               msg.agent_output[3],
-               msg.agent_output[4],
-               msg.agent_output[5],
-               msg.agent_output[6],
-               msg.agent_output[7]
-               );
-
-    xce1_ = sas::geometry_msgs_pose_to_dq(msg.agent_pose);
-    task_status_agent_1_ = msg.task_status;
-    controller_status_agent_1_ = msg.controller_status;
-    error_agent_1_ = msg.error;
-    status_msg_agent_1_ = msg.status_msg;
-    new_B1Z1_agent_1_output_available_ = true;
-}
-
-
-void MainWindow::_callback_external_B1Z1_agent_2_output(const consensus_protocol_msgs::msg::FormationControlAgentData &msg)
-{
-    yce2_ = DQ(msg.agent_output[0],
-               msg.agent_output[1],
-               msg.agent_output[2],
-               msg.agent_output[3],
-               msg.agent_output[4],
-               msg.agent_output[5],
-               msg.agent_output[6],
-               msg.agent_output[7]
-               );
-    xce2_ = sas::geometry_msgs_pose_to_dq(msg.agent_pose);
-    task_status_agent_2_ = msg.task_status;
-    controller_status_agent_2_ = msg.controller_status;
-    error_agent_2_ = msg.error;
-    status_msg_agent_2_ = msg.status_msg;
-    new_B1Z1_agent_2_output_available_ = true;
-}
-        */
 
 void MainWindow::_callback_pause_switch_status(const sas_msgs::msg::Bool &status)
 {
@@ -319,21 +300,6 @@ void MainWindow::_callback_switch_hearbeat([[maybe_unused]] const std_msgs::msg:
     switch_hearbeat_received_ = true;
 }
 
-/*
-void MainWindow::_callback_agent_3_pose_state(const geometry_msgs::msg::PoseStamped &msg)
-{
-    agent_3_pose_ =   sas::geometry_msgs_pose_stamped_to_dq(msg);
-    new_agent_3_pose_data_available_ = true;
-}
-    */
-
-/*
-void MainWindow::_callback_human_cylinder_pose_state(const geometry_msgs::msg::PoseStamped &msg)
-{
-    human_cylinder_pose_ = sas::geometry_msgs_pose_stamped_to_dq(msg);
-    new_human_cylinder_pose_data_available_ = true;
-}
-    */
 
 
 void MainWindow::_update_robot_state()
@@ -361,12 +327,6 @@ void MainWindow::_update_robot_state()
             for (auto i = 0; i < control_inputs_white_.size(); ++i)
                 u_white_spinBoxes_.at(i)->setValue(control_inputs_white_(i));
 
-        //Notification leds
-
-        //pushButton_driver_b1_1
-
-
-        //double  white_twist_state_time = white_twist_state_time_point_.time_since_epoch().count();
 
         if (white_twist_state_time_ != robot_client_white->get_twist_state_time_point().time_since_epoch().count())
             ui->pushButton_driver_b1_1->setStyleSheet("background-color: #0ad125;");
@@ -432,92 +392,10 @@ void MainWindow::_update_robot_state()
 
 }
 
-/*
-void MainWindow::_update_agent_state()
-{
-
-    if (new_B1Z1_agent_1_output_available_)
-    {
-        ui->message_status_agent1->setText(QString(status_msg_agent_1_.c_str()));
-        ui->checkBox_taskStatus_agent1->setChecked(task_status_agent_1_);
-        ui->checkBox_controllerStatus_agent1->setChecked(controller_status_agent_1_);
-
-        if (controller_status_agent_1_)
-        {
-            ui->pushButton_control_loop_agent1->setStyleSheet("background-color: #177517;"
-                                                              "color: white;" );
-        }
-
-        if (task_status_agent_1_)
-        {
-            ui->pushButton_motion_mode_agent1->setStyleSheet("background-color: #177517;"
-                                                             "color: white;" );
-            ui->pushButton_motion_mode_agent1->setText("Motion mode!");
-        }else
-        {
-            ui->pushButton_motion_mode_agent1->setStyleSheet("background-color: #6b6b6b;"
-                                                             "color: black;" );
-            ui->pushButton_motion_mode_agent1->setText("Zero mode!");
-        }
-    }
-    if (new_B1Z1_agent_2_output_available_)
-    {
-        ui->message_status_agent2->setText(QString(status_msg_agent_2_.c_str()));
-        ui->checkBox_taskStatus_agent2->setChecked(task_status_agent_2_);
-        ui->checkBox_controllerStatus_agent2->setChecked(controller_status_agent_2_);
-
-        if (controller_status_agent_2_)
-        {
-            ui->pushButton_control_loop_agent2->setStyleSheet("background-color: #177517;"
-                                                              "color: white;" );
-        }
-
-        if (task_status_agent_2_)
-        {
-            ui->pushButton_motion_mode_agent2->setStyleSheet("background-color: #177517;"
-                                                             "color: white;" );
-            ui->pushButton_motion_mode_agent2->setText("Motion mode!");
-        }else
-        {
-            ui->pushButton_motion_mode_agent2->setStyleSheet("background-color: #6b6b6b;"
-                                                             "color: black;" );
-            ui->pushButton_motion_mode_agent2->setText("Zero mode!");
-        }
-    }
-    if (new_agent_3_pose_data_available_)
-    {
-        VectorXd agent3_pos = agent_3_pose_.translation().vec3();
-        for (size_t i = 0; i < agent_3_pos_spinBoxes_.size(); ++i)
-            agent_3_pos_spinBoxes_.at(i)->setValue(agent3_pos(i));
-
-        VectorXd agent3_rot = agent_3_pose_.rotation().vec4();
-        for (size_t i = 0; i < agent_3_rot_spinBoxes_.size(); ++i)
-            agent_3_rot_spinBoxes_.at(i)->setValue(agent3_rot(i));
-
-        ui->pushButton_agent3->setStyleSheet("background-color: #0ad125;");
-        new_agent_3_pose_data_available_ = false;
-    }else
-        ui->pushButton_agent3->setStyleSheet("background-color: #6b6b6b;" "color: black;" );
-
-
-
-
-    if (new_human_cylinder_pose_data_available_)
-    {
-        VectorXd planar_config = DQ_robotics_extensions::get_planar_joint_configuration_from_pose(human_cylinder_pose_);
-        planar_config(2) = DQ_robotics::rad2deg(planar_config(2));
-        for (size_t i = 0; i < hcylinder_spinBoxes_.size(); ++i)
-            hcylinder_spinBoxes_.at(i)->setValue(planar_config(i));
-
-        ui->pushButton_human->setStyleSheet("background-color: #0ad125;");
-        new_human_cylinder_pose_data_available_ = false;
-    }else
-        ui->pushButton_human->setStyleSheet("background-color: #6b6b6b;" "color: black;" );
-}
-        */
 
 void MainWindow::_update_pause_status()
 {
+    /*
     if (pause_status_)
         ui->pushButton_pause_status->setStyleSheet(pause_yellow_color_);
     else
@@ -539,6 +417,7 @@ void MainWindow::_update_pause_status()
         ui->statusbar->showMessage("Resume triggered!");
     }
     //---------------------------------------------------------------------------//
+*/
 
 
 

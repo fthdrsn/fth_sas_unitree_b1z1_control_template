@@ -64,6 +64,9 @@ private:
     int timerId_;
     int time_step_in_milliseconds_;
     double elapsed_time_;
+    bool enable_watchdog_;
+    bool watchdog_notification_updated_;
+    double watchdog_period_ = 3.0;
 
     sas::DataConfiguration configuration_;
     std::shared_ptr<rclcpp::Node> node_;
