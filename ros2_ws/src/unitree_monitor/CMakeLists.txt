@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.19)
-project(watchdog LANGUAGES CXX)
+project(unitree_monitor LANGUAGES CXX)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Widgets)
 #sudo apt update
@@ -37,7 +37,7 @@ include_directories(
     # Add other ROS2 package includes as needed
 )
 
-set(RCLCPP_LOCAL_BINARY_NAME taskviz_supervisor)
+set(RCLCPP_LOCAL_BINARY_NAME unitree_monitor)
 
 add_executable(${RCLCPP_LOCAL_BINARY_NAME}
     #WIN32 MACOSX_BUNDLE
