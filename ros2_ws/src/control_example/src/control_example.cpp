@@ -249,6 +249,9 @@ void ControlExample::control_loop()
     rclcpp::spin_some(node_);
 
 
+    /// If you want to set the desired pose using a topic, you need to wait for that topic before
+    /// start the control loop. I commented the following lines, since for this example I am not waiting for a desired pose
+    /*
     while (!impl_->new_coppeliasim_xd_data_available() && !_should_shutdown())
     {
         rclcpp::spin_some(node_);
@@ -257,6 +260,7 @@ void ControlExample::control_loop()
         RCLCPP_INFO_STREAM_ONCE(node_->get_logger(), "::Waiting for desired pose from CoppeliaSim ");
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
+    */
 
     // Wait for the robot drivers
     while (!impl_->robot_client_->is_enabled() && !_should_shutdown())

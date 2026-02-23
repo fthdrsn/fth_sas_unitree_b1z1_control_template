@@ -32,7 +32,7 @@ def generate_launch_description():
         )
     conntrol_example = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
-            get_package_share_directory('conntrol_example'), 'launch'),
+            get_package_share_directory('control_example'), 'launch'),
             '/control_example_b1z1_white_launch.py'])
     )
       
