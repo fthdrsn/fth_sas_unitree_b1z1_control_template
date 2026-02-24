@@ -27,11 +27,86 @@ This example assumes the following network configuration. This example uses only
 
 | PC | IP | Notes |
 | ------------- |------------- |------------- |
-| Windows Vicon PC | 10.0.0.6 | Must be running the Vicon software |
+| Windows Vicon PC | 10.0.0.6 | Must be running the Vicon software with the UnitreeB1Z1 setup and the corresponding vicon markers enabled |
 | Windows Clerice PC| 192.168.8.101| This computer is not required/used in this example |
-| Ubuntu Clerice PC | 192.168.8.100 | |
+| Ubuntu Clerice PC | 192.168.8.100 | Main computer for your develoments |
 | B1Z1-white  | 192.168.8.170 | This robot is equipped with a Unitree Z1 gripper |
 | B1Z1-black  | 192.168.8.226 | |
 
 #### Start the basic packages on Ubuntu Clerice PC
+
+```shell
+cd ~/git/sas_unitree_b1z1_control_template/devel/control_example_real_robot_desktop_com
+xhost +local:root
+docker compose up --build
+```
+You should see
+
+- RVIz showing the Vicon markers
+- CoppeliaSim with a B1Z1 static scene running
+- The GUI Unitree monitor, which is equipped with an emergency stop button and the Watchdog commander
+
+#### Build the sas_unitree_b1z1_control_template image and run it on the B1 onboard computer.
+
+This tutorial assumes you are developing on the Ubuntu Clerice PC. Therefore, the following commands are supposed to be executed
+on the Ubuntu Clerice PC.
+
+Build the image 
+
+```shell
+cd ~/git/sas_unitree_b1z1_control_template/
+docker build -f devel/sas_unitree_b1z1_control_template/Dockerfile -t sas_unitree_b1z1_control_template .
+```
+
+Save the image
+
+```shell
+docker save -o sas_unitree_b1z1_control_template.tar.gz sas_unitree_b1z1_control_template:latest
+```
+
+Send the image to the robot 
+
+(e.g., if you want to use the B1Z1-white robot)
+```shell
+scp -r sas_unitree_b1z1_control_template.tar.gz unitree@192.168.8.170:/home/unitree/
+```
+
+(e.g., if you want to use the B1Z1-black robot)
+```shell
+scp -r sas_unitree_b1z1_control_template.tar.gz unitree@192.168.8.226:/home/unitree/
+```
+
+Load and run the image (on the B1 computer)
+
+Enter the B1 computer via SSH
+
+Using the 
+```shell
+ssh unitree@192.168.8.170
+```
+
+Load the Docker image on the B1 computer
+
+```shell
+docker load --input  sas_unitree_b1z1_control_template.tar.gz
+```
+
+Run the container on the B1 computer
+
+```shell
+./run_container.sh sas_unitree_b1z1_control_template sas_unitree_b1z1_control_template
+```
+
+Run your package 
+
+```shell
+buildros2
+source install/setup.bash
+ros2 launch control_example control_example_b1z1_white_full_drivers_launch.py
+```
+
+
+
+
+
  
