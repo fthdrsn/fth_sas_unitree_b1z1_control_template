@@ -35,8 +35,7 @@ COPY ./ros2_ws/src/ /app/software/ROS2/ros2_ws/src/
 #COPY ./ros2_ws/src/sas_monitor_coppeliasim /app/software/ROS2/ros2_ws/src/sas_monitor_coppeliasim 
 #COPY ./ros2_ws/src/unitree_monitor /app/software/ROS2/ros2_ws/src/unitree_monitor
 COPY ./utils /app/software/ROS2/utils
-COPY ./submodules/unitree_kinematics /app/software/ROS2/submodules/unitree_kinematics/
-
+#COPY ./submodules/unitree_kinematics /app/software/ROS2/submodules/unitree_kinematics/    
 
 RUN bash -c "source /opt/ros/jazzy/setup.bash; cd /app/software/ROS2/ros2_ws/; colcon build && source install/setup.bash" 
 
