@@ -1,0 +1,62 @@
+services:
+  ros_jazzy_vicon:
+    build: https://github.com/Adorno-Lab/docker_recipes.git#main:ubuntu_24/ros_jazzy_vicon
+    environment:
+      DISPLAY: $DISPLAY  # x server related
+      ROS_DOMAIN_ID: 77 # Set ROS domain ID for all ROS2 nodes
+    privileged: true # Needed for some gpu configurations.
+    volumes:
+      #- repo-data:/root/sas_tutorial_workspace/src/sas_ur_control_template/
+      - /tmp/.X11-unix:/tmp/.X11-unix # x server related
+      - ~/.Xauthority:/root/.Xauthority # x server related
+    network_mode: "host" # x server related and for ROS2 networking
+    ipc: "host"
+    command: /bin/bash -c "
+      source /opt/ros/jazzy/setup.bash;
+      cd ~/ros2_ws/ && colcon build;
+      source ~/ros2_ws/install/setup.bash;
+      ros2 launch motion_capture_tracking launch.py"
+
+  coppeliasim_simros2:
+    build:
+      context: ../..  
+      dockerfile: devel/coppeliasim_simros2/Dockerfile
+    environment:
+      DISPLAY: $DISPLAY # x server related
+      ROS_DOMAIN_ID: 77 # Set ROS domain ID for all ROS2 nodes
+    privileged: true # Needed for some gpu configurations.
+    volumes:
+      #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
+      - /tmp/.X11-unix:/tmp/.X11-unix # x server related
+      - ~/.Xauthority:/root/.Xauthority # x server related
+    network_mode: "host" # x server related
+    ipc: "host"
+    command: /bin/bash -c "
+      sleep 3; 
+      source /opt/ros/jazzy/setup.bash;
+      ~/utils/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu24_04/coppeliaSim.sh -s 0 -f app/scenes/ros2_holonomic_b1z1_setup_static.ttt"      
+
+  micro_ros_agent:
+    image: microros/micro-ros-agent:jazzy
+    network_mode: "host"  # Share host network for ROS2 communication
+    command: udp4 --port 8888 -v6
+    restart: unless-stopped  # Optional: auto-restart if it crashes
+
+  sas_unitree_b1z1_control_template:
+    build:
+      context: ../..  
+      dockerfile: devel/sas_unitree_b1z1_control_template/Dockerfile
+    environment:
+      DISPLAY: $DISPLAY # x server related
+      ROS_DOMAIN_ID: 77 # Set ROS domain ID for all ROS2 nodes
+    privileged: true # Needed for some gpu configurations.
+    volumes:
+      #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
+      - /tmp/.X11-unix:/tmp/.X11-unix # x server related
+      - ~/.Xauthority:/root/.Xauthority # x server related
+    network_mode: "host" # x server related
+    ipc: "host"
+    command: /bin/bash -c "
+      source /opt/ros/jazzy/setup.bash;
+      cd /app/software/ROS2/ros2_ws/ && source install/setup.bash && colcon build;
+      ros2 launch sas_monitor_coppeliasim sas_monitor_coppeliasim_and_unitree_monitor_launch.py"

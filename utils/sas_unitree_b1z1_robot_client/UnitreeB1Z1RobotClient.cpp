@@ -231,7 +231,8 @@ DQ UnitreeB1Z1RobotClient::get_b1_angular_velocities(const REFERENCE_FRAME& refe
 
 /**
  * @brief UnitreeB1Z1RobotClient::set_arm_joint_positions sets the joint positions of the arm, including the gripper.
- * @param target_joint_positions The desired target joint positions including the gripper.
+ * @param target_joint_positions The desired target joint positions including the gripper. The gripper is closed with 0.0 and
+ *        open with a negative value (radian angle).
  */
 void UnitreeB1Z1RobotClient::set_arm_joint_positions(const VectorXd &target_joint_positions)
 {
