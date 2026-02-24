@@ -97,7 +97,7 @@ Run the container on the B1 computer
 ./run_container.sh sas_unitree_b1z1_control_template sas_unitree_b1z1_control_template
 ```
 
-Run your package 
+Inside the container, run your package 
 
 ```shell
 buildros2
