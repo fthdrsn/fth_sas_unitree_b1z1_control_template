@@ -8,62 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(sas_robot_driver_ur REQUIRED)
-find_package(sas_robot_driver REQUIRED)
-find_package(sas_core REQUIRED)
-find_package(sas_conversions REQUIRED)
-find_package(sensor_msgs REQUIRED)
 
-
-set(REPOSITORY_DIR ${CMAKE_SOURCE_DIR}/../../../)
-include_directories(${REPOSITORY_DIR}/utils)
-
-include_directories(utils)
-add_library(${PROJECT_NAME}
-    ${REPOSITORY_DIR}/utils/sas_unitree_b1z1_robot_client/UnitreeB1Z1RobotClient.cpp
-)
-ament_target_dependencies(${PROJECT_NAME}
-rclcpp sas_core sas_conversions sensor_msgs
-)
-
-############################
-# CPP Binary Block [BEGIN] #
-# vvvvvvvvvvvvvvvvvvvvvvvv #
-# https://ros2-tutorial.readthedocs.io/en/latest/
-# While we cant use blocks https://cmake.org/cmake/help/latest/command/block.html#command:block
-# we use set--unset
-set(RCLCPP_LOCAL_BINARY_NAME joint_interface_example_cpp)
-
-add_executable(${RCLCPP_LOCAL_BINARY_NAME}
-   src/joint_interface_example.cpp
-    )
-
-ament_target_dependencies(${RCLCPP_LOCAL_BINARY_NAME}
-    rclcpp
-    sas_core
-    sas_robot_driver
-    sas_conversions
-    sensor_msgs
-    )
-
-target_link_libraries(${RCLCPP_LOCAL_BINARY_NAME}
-    ${PROJECT_NAME}
-   )
-
-target_include_directories(${RCLCPP_LOCAL_BINARY_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>)
-
-target_compile_features(${RCLCPP_LOCAL_BINARY_NAME} PUBLIC c_std_99 cxx_std_17)
-
-install(TARGETS ${RCLCPP_LOCAL_BINARY_NAME}
-    DESTINATION lib/${PROJECT_NAME})
-
-unset(RCLCPP_LOCAL_BINARY_NAME)
-
-# ^^^^^^^^^^^^^^^^^^^^^^ #
-# CPP Binary Block [END] #
-##########################
 
 # According to https://github.com/SmartArmStack/sas_robot_driver/blob/ros2/CMakeLists.txt
 ##### LAUNCH FILES #####
