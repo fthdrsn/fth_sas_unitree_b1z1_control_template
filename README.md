@@ -11,7 +11,7 @@ xhost +local:root
 docker compose up
 ```
 
+https://github.com/user-attachments/assets/120c1893-872f-4812-8e3e-78f159014961
 
-https://github.com/user-attachments/assets/f96a169b-ed90-4eba-819c-9e8b1482c416
 
 
