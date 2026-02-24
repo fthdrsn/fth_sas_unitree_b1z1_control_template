@@ -250,7 +250,8 @@ void ControlExample::control_loop()
 
 
     /// If you want to set the desired pose using a topic, you need to wait for that topic before
-    /// start the control loop. I commented the following lines, since for this example I am not waiting for a desired pose
+    /// start the control loop. I commented the following lines, since for this example I am not waiting for a desired pose.
+    /// In the following lines, I wait for the topic configuration_.B1_topic_prefix + "/get/coppeliasim_frame_xd"
     /*
     while (!impl_->new_coppeliasim_xd_data_available() && !_should_shutdown())
     {
@@ -326,6 +327,8 @@ void ControlExample::control_loop()
 
         qi_arm(0) = (pi/4)*sin(w*t);
 
+        /// Use the following command to set the joint positions of the Unitree Z1 (6-DOF). Note that the method set_arm_joint_positions expects
+        /// a vector of dimension 7. This is because the method also sets the gripper position
         impl_->robot_client_->set_arm_joint_positions(DQ_robotics_extensions::Numpy::vstack(qi_arm, DQ_robotics_extensions::CVectorXd({0.0})));
         i++;
 
