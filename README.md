@@ -46,6 +46,11 @@ You should see
 - CoppeliaSim with a B1Z1 static scene running
 - The GUI Unitree monitor, which is equipped with an emergency stop button and the Watchdog commander
 
+<img width="800" alt="Screenshot from 2026-02-24 18-25-28" src="https://github.com/user-attachments/assets/2baaa548-f953-43af-aa51-0ee00b9ffd12" />
+
+
+
+
 #### Build the sas_unitree_b1z1_control_template image and run it on the B1 onboard computer.
 
 This tutorial assumes you are developing on the Ubuntu Clerice PC. Therefore, the following commands are supposed to be executed
