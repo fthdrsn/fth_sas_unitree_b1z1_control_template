@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/120c1893-872f-4812-8e3e-78f159014961
 > More details are available in the software license.
 
 > [!warning]
-> This code will move the robot. Be sure that the workspace is free and safe for operation.
+> This code will move the robot. Be sure that the workspace is free and safe for operation. Be ready to stop the robot at any time. 
 
 This example assumes the following network configuration. This example uses only one Unitree B1Z1 robot. You can use the B1Z1-white or the B1Z1-black.
 
