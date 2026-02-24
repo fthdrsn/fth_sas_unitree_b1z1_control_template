@@ -112,6 +112,15 @@ ros2 launch control_example control_example_b1z1_white_full_drivers_launch.py
 
 
 
+https://github.com/user-attachments/assets/ee7d0c19-0a7d-4b7c-967d-10e70d1967bf
+
+
+
+
+
+
+
+
 
 
  
