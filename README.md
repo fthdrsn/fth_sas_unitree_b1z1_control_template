@@ -36,7 +36,7 @@ This example assumes the following network configuration. This example uses only
 #### Start the basic packages on Ubuntu Clerice PC
 
 ```shell
-cd ~/git/sas_unitree_b1z1_control_template/devel/control_example_real_robot_desktop_com
+cd ~/git/sas_unitree_b1z1_control_template/devel/control_example_real_robot_desktop_compose
 xhost +local:root
 docker compose up --build
 ```
