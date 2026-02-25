@@ -3,7 +3,7 @@
 # sas_unitree_b1z1_control_template
 
 > [!NOTE]  
-> This tutorial uses Docker. If you are not familiar with this tool, you could check this [course.](https://uomresearchit.github.io/docker-introduction/introduction.html).
+> This tutorial uses Docker. If you are not familiar with this tool, you could check this [course](https://uomresearchit.github.io/docker-introduction/introduction.html).
 
 
 > [!NOTE]  
