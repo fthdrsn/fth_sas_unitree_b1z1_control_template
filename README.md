@@ -115,7 +115,6 @@ Inside the container, run your package
 
 ```shell
 buildros2
-source install/setup.bash
 ros2 launch control_example control_example_b1z1_white_full_drivers_launch.py
 ```
 
