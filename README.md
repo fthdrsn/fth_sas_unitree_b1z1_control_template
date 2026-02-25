@@ -2,6 +2,15 @@
 
 # sas_unitree_b1z1_control_template
 
+> [!NOTE]  
+> This tutorial uses Docker. If you are not familiar with this tool, you could check this [course.](https://uomresearchit.github.io/docker-introduction/introduction.html).
+
+
+> [!NOTE]  
+> The implementation is based on [SAS](https://ros2-tutorial.readthedocs.io/en/latest/).
+> 
+> <img width="300" alt="capybara_mobile" src="https://github.com/user-attachments/assets/34fde07d-b20a-4460-b34d-432854d5caa9" />
+
 ### Minimal Example Simulation (CoppeliaSim + simROS2)
 
 Tested  on Ubuntu Amd64
@@ -113,6 +122,8 @@ ros2 launch control_example control_example_b1z1_white_full_drivers_launch.py
 
 
 https://github.com/user-attachments/assets/ee7d0c19-0a7d-4b7c-967d-10e70d1967bf
+
+
 
 
 
