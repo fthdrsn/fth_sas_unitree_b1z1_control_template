@@ -7,7 +7,7 @@
 
 
 > [!NOTE]  
-> The implementation is based on [SAS](https://ros2-tutorial.readthedocs.io/en/latest/).
+> The implementation is based on ROS2 Jazzy, and SAS. Recommended course [here](https://ros2-tutorial.readthedocs.io/en/latest/).
 > 
 > <img width="300" alt="capybara_mobile" src="https://github.com/user-attachments/assets/34fde07d-b20a-4460-b34d-432854d5caa9" />
 
