@@ -1,0 +1,15 @@
+# Goal: target pose to move to
+geometry_msgs/PoseStamped goal_pose
+int32 method
+
+---
+
+# Result: whether goal was reached successfully
+bool success
+float64 final_error
+
+---
+
+# Feedback: current progress
+geometry_msgs/PoseStamped current_pose
+float64 task_error

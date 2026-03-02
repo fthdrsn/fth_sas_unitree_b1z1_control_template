@@ -11,8 +11,8 @@ RUN apt update && apt-get install ros-jazzy-sas-* -y
 
 
 # Install QT
-RUN apt update && apt-get install qt6-base-dev qt6-tools-dev-tools -y
-
+#RUN apt update && apt-get install qt6-base-dev qt6-tools-dev-tools -y
+RUN apt update && apt-get install qt6-base-dev qt6-tools-dev-tools -y qt6-base-dev qt6-tools-dev
 
 # Install robot_constraint_editor
 RUN cd ~/git && git clone https://github.com/Adorno-Lab/robot_constraint_editor

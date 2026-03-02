@@ -1,0 +1,64 @@
+---
+CameraParameters: #Setting camera parameters here will setup coppeliaSim accordingly
+  imWidth: 640
+  imHeight: 480
+  camFov: 74  
+  nearClip: 0.01
+  farClip: 5.0
+ 
+ControllerSettings:
+  controllerGain: 5         # Gain factor for the controller
+  controllerDamping: 0.01     # Damping factor for the controller
+  errorTolerance: 0.1        # Tolerance for the error in reaching the target
+  stabilityThreshold: 0.0005   # Threshold for considering the system stable
+  maxStabilityCount: 250       # Number of consecutive iterations below stability threshold to consider stable
+  includeStabilityCheck: True  # Whether to include stability check in the controller
+  weightDirectionObj: 0.5     # Weight for the direction objective in the QP controller
+  
+ConstraintSwitches:
+  enableVisibilityConst: False
+  enableCollisionConst: True
+  enableJointConst: True
+  enableCirculationConst: False
+  enableVelocityConst: True
+
+SimulationSettings:
+  cs_host: "localhost"
+  cs_port: 23000
+  cs_TIMEOUT_IN_MILISECONDS: 5000 # in milliseconds
+  cs_B1_robotname: "UnitreeB1_1"
+  cs_Z1_robotname: "UnitreeZ1"
+  cs_desired_frame: "xd1"
+  B1_topic_prefix: "sas_b1/b1_1"
+  Z1_topic_prefix: "sas_z1/z1_1"
+  thread_sampling_time_sec: 0.05
+  search_space_center: [0.0, 0.0, 0.0] # Center of the search space for collision avoidance (x, y, z)
+  search_space_radius: 1 # Radius of the search space for collision avoidance
+
+ 
+## Robot position and velocity limits
+RobotConstraints:
+  velLimBase: [0.15, 0.15, 0.15]  # [vx, vy, wz]
+  velLimArm: [1.57, 1.57,1.57, 1.57, 1.57, 1.57]  # [q1, q2, q3,q4, q5]
+  # velLimBase: [0.2, 0.2, 0.2]  # [vx, vy, wz]
+  # velLimArm: [0.1, 0.1,0.1, 0.1, 0.1, 0.1]  # [q1, q2, q3,q4, q5]
+  armJointLimMax: [30, 165,    0.0,  80,  45,  160]
+  armJointLimMin: [-30,  45,  -90, -80, -45, -160]
+
+CollisionAvoidance:
+  softminDelta: 0.10 # Sofmin distance offset
+  softminH: 0.03
+
+## Visibility constraint parameters
+VisibilityConstraint:
+  safeDistVisibility: 0.75 #If you reduce FoV, you want to reduce this distance as well robot could stuck at local minima otherwise
+  softAlpha: 1      #2 # Alpha and beta determine the decaying rate of the soft visibility constraint depending on distance to the target
+  softBeta: 0.6    #1.2
+
+CirculationConstraint:
+  noCirculationRadius: 0.8  # Radius around the target where circulation constraint is not applied
+  D0: 0.14                  # Distance parameter for circulation constraint
+  b: 0.044                  # Strength parameter for circulation constraint
+
+
+

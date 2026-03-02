@@ -58,6 +58,6 @@ RUN mkdir -p /app/software/ROS2/ros2_ws/src
 
 COPY ./scenes app/scenes
 
-#RUN bash -c "source /opt/ros/jazzy/setup.bash; cd /app/software/ROS2/ros2_ws/; colcon build && source install/setup.bash" 
+RUN bash -c "source /opt/ros/jazzy/setup.bash; cd /app/software/ROS2/ros2_ws/; colcon build && source install/setup.bash" 
 
 RUN echo "source /etc/bash_env" >> ~/.bashrc

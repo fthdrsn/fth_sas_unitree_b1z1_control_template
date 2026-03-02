@@ -13,10 +13,11 @@ services:
       #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
       - /tmp/.X11-unix:/tmp/.X11-unix # x server related
       - ~/.Xauthority:/root/.Xauthority # x server related
+      - /dev/shm:/dev/shm
     network_mode: "host" # x server related
     ipc: "host"
     command: /bin/bash -c "
-      sleep 3; 
+      sleep 5; 
       source /opt/ros/jazzy/setup.bash;
       ~/utils/CoppeliaSim_Edu_V4_7_0_rev4_Ubuntu24_04/coppeliaSim.sh -s 0 -f app/scenes/ros2_holonomic_b1z1_setup.ttt"
 
@@ -32,6 +33,7 @@ services:
       #- repo-data:/root/git/rap2025_wholebodycontrol/software/ROS2/ros2_ws/src/sas_coppeliasim_unitree_b1z1/
       - /tmp/.X11-unix:/tmp/.X11-unix # x server related
       - ~/.Xauthority:/root/.Xauthority # x server related
+      - /dev/shm:/dev/shm
     network_mode: "host" # x server related
     ipc: "host"
     command: /bin/bash -c "
