@@ -45,7 +45,7 @@ This example assumes the following network configuration. This example uses only
 #### Start the basic packages on Ubuntu Clerice PC
 
 ```shell
-cd ~/git/sas_unitree_b1z1_control_template/devel/control_example_real_robot_desktop_compose
+cd ~/git/fth_sas_unitree_b1z1_control_template/devel/fth_control_real_robot_desktop_compose
 xhost +local:root
 docker compose up --build
 ```
@@ -68,26 +68,21 @@ on the Ubuntu Clerice PC.
 Build the image 
 
 ```shell
-cd ~/git/sas_unitree_b1z1_control_template/
-docker build -f devel/sas_unitree_b1z1_control_template/Dockerfile -t sas_unitree_b1z1_control_template .
+cd ~/git/fth_sas_unitree_b1z1_control_template/
+docker build -f devel/fth_unitree_b1z1_control_template/Dockerfile -t fth_sas_unitree_b1z1_control_template .
 ```
 
 Save the image
 
 ```shell
-docker save -o sas_unitree_b1z1_control_template.tar.gz sas_unitree_b1z1_control_template:latest
+docker save -o fth_sas_unitree_b1z1_control_template.tar.gz fth_sas_unitree_b1z1_control_template:latest
 ```
 
 Send the image to the robot 
 
-(e.g., if you want to use the B1Z1-white robot)
-```shell
-scp -r sas_unitree_b1z1_control_template.tar.gz unitree@192.168.8.170:/home/unitree/
-```
-
 (e.g., if you want to use the B1Z1-black robot)
 ```shell
-scp -r sas_unitree_b1z1_control_template.tar.gz unitree@192.168.8.226:/home/unitree/
+scp -r fth_sas_unitree_b1z1_control_template.tar.gz unitree@192.168.8.226:/home/unitree/
 ```
 
 Load and run the image (on the B1 computer)
@@ -96,26 +91,26 @@ Enter the B1 computer via SSH
 
 Using the 
 ```shell
-ssh unitree@192.168.8.170
+ssh unitree@192.168.8.226
 ```
 
 Load the Docker image on the B1 computer
 
 ```shell
-docker load --input  sas_unitree_b1z1_control_template.tar.gz
+docker load --input  fth_sas_unitree_b1z1_control_template.tar.gz
 ```
 
 Run the container on the B1 computer
 
 ```shell
-./run_container.sh sas_unitree_b1z1_control_template sas_unitree_b1z1_control_template
+./run_container.sh fth_sas_unitree_b1z1_control_template fth_sas_unitree_b1z1_control_template
 ```
 
 Inside the container, run your package 
 
 ```shell
 buildros2
-ros2 launch control_example control_example_b1z1_white_full_drivers_launch.py
+ros2 launch fth_controller_pkg fth_control_b1z1_black_full_drivers_launch.py
 ```
 
 
