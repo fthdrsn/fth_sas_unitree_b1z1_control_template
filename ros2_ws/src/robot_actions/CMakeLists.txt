@@ -13,6 +13,8 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "action/MoveToGoal.action"
+  "msg/TargetPose.msg"
+  "msg/GoalState.msg"
   DEPENDENCIES action_msgs geometry_msgs std_msgs
 )
 
